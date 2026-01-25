@@ -1,8 +1,8 @@
 # docker-workshop-DEZoomCamp
 
-# docker_compose.yaml
-# to run this go to the pipeline dir and run docker-compose up in the terminal
-# to stop it, run docker-compose down
+**docker_compose.yaml**
+**to run this go to the pipeline dir and run "docker-compose up" in the terminal**
+**to stop it, run "docker-compose down"**
 services:
   pgdatabase:
     image: postgres:18
@@ -30,22 +30,46 @@ volumes:
   pgadmin_data:
 
 
-# to add data into postgreSQL DB we need to have 
-# a separate container with .py file 
-# run the following:
+**to add data into postgreSQL DB we need to have**
+**a separate container with .py file**
+**run the following:**
 
 docker build -t pipeline_project .
 
-# pipeline_default - network created by docker-compose
-# pipeline_project:v001 - docker container for our script
+**pipeline_default - network created by docker-compose**
+**pipeline_project:v001 - docker container for our script**
 docker run -it --rm\
     --network=pipeline_default \
-    pipeline_project:v001 \
+    pipeline_project \
     --pg-user=root \
     --pg-pass=root \
     --pg-host=pgdatabase \
     --pg-port=5432 \
     --pg-db=ny_taxi \
-    --table_name=yellow_taxi_trips_2021_2 \
+    --table_name=yellow_taxi_trips_2021_4 \
     --year=2021 \
-    --month=02 
+    --month=04
+
+  **For zones**
+docker run -it --rm\
+    --network=pipeline_default \
+    pipeline_project \
+    --pg-user=root \
+    --pg-pass=root \
+    --pg-host=pgdatabase \
+    --pg-port=5432 \
+    --pg-db=ny_taxi \
+    --table_name=zones
+
+**For taxi_trips**
+docker run -it --rm\
+    --network=pipeline_default \
+    pipeline_project \
+    --pg-user=root \
+    --pg-pass=root \
+    --pg-host=pgdatabase \
+    --pg-port=5432 \
+    --pg-db=ny_taxi \
+    --table_name=taxi_trips
+
+

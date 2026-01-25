@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+from os import path
 import pandas as pd
 from sqlalchemy import create_engine
 from tqdm.auto import tqdm
@@ -45,6 +46,7 @@ def run(pg_user, pg_pass, pg_host, pg_port, pg_db, year, month, table_name):
 
     prefix = 'https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/'
     url = f'{prefix}/yellow_tripdata_{year}-{month}.csv.gz'
+
     df = pd.read_csv(
         url,
         dtype=dtype,
@@ -70,8 +72,56 @@ def run(pg_user, pg_pass, pg_host, pg_port, pg_db, year, month, table_name):
             first = False
         else:
             batch.to_sql(name=table_name, con=engine, if_exists='append')
-        print(len(batch))
 
+
+
+# def run_parquet(pg_user, pg_pass, pg_host, pg_port, pg_db, year, month, table_name):
+
+#     url = "https://d37ci6vzurychx.cloudfront.net/trip-data/green_tripdata_2025-11.parquet"
+
+#     # parquet dataset
+#     df = pd.read_parquet(url)
+
+#     engine = create_engine(f'postgresql://{pg_user}:{pg_pass}@{pg_host}:{pg_port}/{pg_db}')
+
+#     df.to_sql(table_name, con=engine, if_exists='replace')
+#     print('done')
+
+# def run_taxi_zones(pg_user, pg_pass, pg_host, pg_port, pg_db, table_name, year, month):
+
+#     prefix = 'https://github.com/DataTalksClub/nyc-tlc-data/releases/download/'
+#     url = f'{prefix}/misc/taxi_zone_lookup.csv'
+
+#     types = {
+#         "LocationID": 'Int64',
+#         "Borough": 'string',
+#         "Zone": 'string',
+#         "service_zone": 'string'
+#     }
+
+#     df = pd.read_csv(
+#         url,
+#         dtype=types
+#     )
+
+#     engine = create_engine(f'postgresql://{pg_user}:{pg_pass}@{pg_host}:{pg_port}/{pg_db}')
+
+#     df.head(0).to_sql(name=table_name, con=engine, if_exists='replace')
+
+#     df_iter = pd.read_csv(
+#         url,
+#         dtype=types,
+#         iterator=True,
+#         chunksize=100
+#     )
+
+#     first = True
+#     for batch in tqdm(df_iter):
+#         if first:
+#             batch.to_sql(name=table_name, con=engine, if_exists='replace')
+#             first = False
+#         else:
+#             batch.to_sql(name=table_name, con=engine, if_exists='append')
 
 if __name__ == '__main__':
     run()
